@@ -21,6 +21,14 @@ App::Greple::under - greple under-line module
 B<greple>'s B<under> module emphasizes matched text not in the same line
 but in the next line without ANSI effect.
 
+=for html <p>
+<img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/normal.png">
+</p>
+
+=for html <p>
+<img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/under-line.png">
+</p>
+
 =head1 AUTHOR
 
 Kazumasa Utashiro

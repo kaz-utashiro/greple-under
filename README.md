@@ -14,6 +14,18 @@ App::Greple::under - greple under-line module
 **greple**'s **under** module emphasizes matched text not in the same line
 but in the next line without ANSI effect.
 
+<div>
+    <p>
+    <img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/normal.png">
+    </p>
+</div>
+
+<div>
+    <p>
+    <img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/under-line.png">
+    </p>
+</div>
+
 # AUTHOR
 
 Kazumasa Utashiro
