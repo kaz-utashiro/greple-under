@@ -34,7 +34,7 @@ it under the same terms as Perl itself.
 
 =cut
 
-use App::Greple::Common qw(@colors);
+use App::Greple::Common qw(@color_list);
 use Term::ANSIColor::Concise qw(ansi_code);
 use Text::ANSI::Fold;
 use Text::ANSI::Fold::Util qw(ansi_width);
@@ -53,8 +53,8 @@ my %index;
 
 sub prologue {
     return if state $called++;
-    @colors == 0 and die "color table is not available.\n";
-    my @ansi = map { ansi_code($_) } @colors;
+    @color_list == 0 and die "color table is not available.\n";
+    my @ansi = map { ansi_code($_) } @color_list;
     my @ansi_re = map { quotemeta($_) } @ansi;
     %index = map { $ansi[$_] => $_ } keys @ansi;
     my $reset_re = qr/(?:\e\[[0;]*[mK])+/;
