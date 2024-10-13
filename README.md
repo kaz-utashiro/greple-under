@@ -1,16 +1,18 @@
-
+[![Actions Status](https://github.com/kaz-utashiro/greple-under/actions/workflows/test.yml/badge.svg)](https://github.com/kaz-utashiro/greple-under/actions)
 # NAME
 
-App::Greple::under - greple under module
+App::Greple::under - greple under-line module
 
 # SYNOPSIS
 
-    greple -Munder
+    greple -Munder::line ...
+
+    greple -Munder ... | greple -Munder::line ^
 
 # DESCRIPTION
 
 **greple**'s **under** module emphasizes matched text not in the same line
-but in the next line.
+but in the next line without ANSI effect.
 
 # AUTHOR
 

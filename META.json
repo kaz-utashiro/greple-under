@@ -1,5 +1,5 @@
 {
-   "abstract" : "greple under module",
+   "abstract" : "greple under-line module",
    "author" : [
       "Kazumasa Utashiro"
    ],
@@ -53,6 +53,17 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kaz-utashiro/greple-under/issues"
+      },
+      "homepage" : "https://github.com/kaz-utashiro/greple-under",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/kaz-utashiro/greple-under.git",
+         "web" : "https://github.com/kaz-utashiro/greple-under"
+      }
+   },
    "version" : "0.01",
    "x_contributors" : [
       "Kazumasa Utashiro <kaz@utashiro.com>"
