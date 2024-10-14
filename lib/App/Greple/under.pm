@@ -16,6 +16,8 @@ App::Greple::under - greple under-line module
 
     greple -Munder ... | greple -Munder::line ^
 
+    greple -Munder ... | greple -Munder::bake
+
 =head1 DESCRIPTION
 
 B<greple>'s B<under> module emphasizes matched text not in the same line
@@ -52,31 +54,16 @@ $Term::ANSIColor::Concise::NO_RESET_EL = 1;
 Text::ANSI::Fold->configure(expand => 1);
 
 my $config = {
-    name => 'line',
+    type => 'eighth',
     "custom-colormap" => 1,
 };
 
-my $re;
-my %index;
-
-sub prologue {
-    return if state $called++;
-    @color_list == 0 and die "color table is not available.\n";
-    my @ansi = map { ansi_code($_) } @color_list;
-    my @ansi_re = map { quotemeta($_) } @ansi;
-    %index = map { $ansi[$_] => $_ } keys @ansi;
-    my $reset_re = qr/(?:\e\[[0;]*[mK])+/;
-    $re = do {
-	local $" = '|';
-	qr/(?<ansi>@ansi_re) (?<text>[^\e]*) (?<reset>$reset_re)/x;
-    };
-}
-
 my $space = ' ';
 my %marks  = (
-    line => [
-	"\N{UPPER ONE EIGHTH BLOCK}",
-    ],
+    eighth => [ "\N{UPPER ONE EIGHTH BLOCK}" ],
+    half =>   [ "\N{UPPER HALF BLOCK}" ],
+    overline => [ "\N{OVERLINE}" ],
+    macron => [ "\N{MACRON}" ],
     number => [ "0" .. "9" ],
     alphabet => [ "a" .. "z", "A" .. "Z" ],
     block => [
@@ -106,9 +93,25 @@ my %marks  = (
 	"\N{BOX DRAWINGS DOUBLE UP AND HORIZONTAL}",
     ],
 );
-my @marks = $marks{$config->{name}}->@*;
+my @marks = $marks{$config->{type}}->@*;
+
+my $re;
+my %index;
+
+sub setup {
+    @color_list == 0 and die "color table is not available.\n";
+    my @ansi = map { ansi_code($_) } @color_list;
+    my @ansi_re = map { s/\\\e/\\e/gr } map { quotemeta($_) } @ansi;
+    %index = map { $ansi[$_] => $_ } keys @ansi;
+    my $reset_re = qr/(?:\e\[[0;]*[mK])+/;
+    $re = do {
+	local $" = '|';
+	qr/(?<ansi>@ansi_re) (?<text>[^\e]*) (?<reset>$reset_re)/x;
+    };
+}
 
 sub line {
+    setup();
     while (<>) {
 	local @_;
 	my @under;
@@ -138,15 +141,15 @@ sub line {
 __DATA__
 
 option default \
-    --prologue &__PACKAGE__::prologue \
     --under-custom-colormap
 
 option --under-line \
-    --of &__PACKAGE__::line
+    $<move> \
+    --pf &__PACKAGE__::line
 
 option --under-custom-colormap \
     $<move> \
     --cm @ \
-    --cm {SGR6;1},{SGR6;2},{SGR6;3} \
-    --cm {SGR6;4},{SGR6;5},{SGR6;6} \
-    --cm {SGR6;7},{SGR6;8},{SGR6;9}
+    --cm {SGR26;1},{SGR26;2},{SGR26;3} \
+    --cm {SGR26;4},{SGR26;5},{SGR26;6} \
+    --cm {SGR26;7},{SGR26;8},{SGR26;9}

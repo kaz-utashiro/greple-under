@@ -9,6 +9,8 @@ App::Greple::under - greple under-line module
 
     greple -Munder ... | greple -Munder::line ^
 
+    greple -Munder ... | greple -Munder::bake
+
 # DESCRIPTION
 
 **greple**'s **under** module emphasizes matched text not in the same line
