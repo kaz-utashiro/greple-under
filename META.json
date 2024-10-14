@@ -42,7 +42,10 @@
       },
       "runtime" : {
          "requires" : {
-            "App::Greple" : "0",
+            "App::Greple" : "9.17",
+            "Term::ANSIColor::Concise" : "0",
+            "Text::ANSI::Fold" : "0",
+            "Text::ANSI::Fold::Util" : "0",
             "perl" : "5.024"
          }
       },
