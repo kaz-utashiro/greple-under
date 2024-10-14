@@ -8,4 +8,8 @@ our $VERSION = "0.01";
 
 __DATA__
 
-option default -Munder --under-line --re '\A' --all
+option default \
+    -Munder \
+    --under-custom-colormap \
+    --under-line \
+    --re '\A' --all

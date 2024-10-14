@@ -1,4 +1,4 @@
-package App::Greple::under::line;
+package App::Greple::under::mise;
 use 5.024;
 use warnings;
 
@@ -10,5 +10,4 @@ __DATA__
 
 option default \
     -Munder \
-    --under-custom-colormap \
-    --under-line
+    --under-custom-colormap
