@@ -22,12 +22,21 @@ This module is intended to clarify highlighting points without ANSI
 sequencing when highlighting by ANSI sequencing is not possible for
 some reason.
 
+The following command searches for a paragraph that contains all the
+words specified.
+
+    greple 'license agreements software freedom' LICENSE -p
+
+=for html <p>
+<img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/normal.png">
+</p>
+
 By default, the emphasis should be indicated by underlining it on the
 next line.
 
     greple -Munder::line 'license agreements software freedom' LICENSE -p
 
-will produce output like this:
+Above command will produce output like this:
 
     ┌───────────────────────────────────────────────────────────────────────┐
     │   The license agreements of most software companies try to keep users │
@@ -40,11 +49,8 @@ will produce output like this:
     │ General Public License applies to the Free Software Foundation's      │
     │ software and to any other program whose authors commit to using it.   │
     │ ▔▔▔▔▔▔▔▔                                                              │
+    │ You can use it for your programs, too.                                │
     └───────────────────────────────────────────────────────────────────────┘
-
-=for html <p>
-<img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/normal.png">
-</p>
 
 =for html <p>
 <img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/under-line.png">
