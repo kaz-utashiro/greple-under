@@ -94,15 +94,21 @@ use Text::ANSI::Fold::Util qw(ansi_width);
 use Hash::Util qw(lock_keys);
 use Data::Dumper;
 
+use App::Greple::Config qw(config);
+
+my $config = App::Greple::Config->new(
+    type => 'overline',
+    space => ' ',
+    custommap => 1,
+);
+
+sub finalize {
+    our($mod, $argv) = @_;
+    $config->load($argv);
+}
+
 $Term::ANSIColor::Concise::NO_RESET_EL = 1;
 Text::ANSI::Fold->configure(expand => 1);
-
-our %config = (
-    type => 'eighth',
-    space => ' ',
-    "custom-colormap" => 1,
-);
-lock_keys %config;
 
 my %marks  = (
     eighth   => [ "\N{UPPER ONE EIGHTH BLOCK}" ],
@@ -155,7 +161,16 @@ sub prepare {
 	local $" = '|';
 	qr/(?<ansi>@ansi_re) (?<text>[^\e]*) (?<reset>$reset_re)/x;
     };
-    @marks = $marks{$config{type}}->@*;
+    my $type = $config->{type};
+    if (my $mark = $marks{$type}) {
+	@marks = $mark->@*;
+    } else {
+	if ($type =~ /\A\X\z/) {
+	    @marks = ($type);
+	} else {
+	    die "$type: invalid type.\n";
+	}
+    }
 }
 
 sub line {
@@ -168,7 +183,7 @@ sub line {
 	    push @_, $+{pre}, $+{text};
 	    my $mark = $marks[$index{$+{ansi}} % @marks];
 	    push @under,
-		$config{space} x ansi_width($+{pre}),
+		$config->{space} x ansi_width($+{pre}),
 		$mark  x ansi_width($+{text});
 	    $pos = pos;
 	}
@@ -182,47 +197,6 @@ sub line {
 	print join '', @_;
 	print join '', @under, "\n";
     }
-}
-
-sub config {
-    while (my($k, $v) = splice @_, 0, 2) {
-	my @names = split /\./, $k;
-	my $c = \%config;
-	my $name = pop @names;
-	for (@names) {
-	    $c = $c->{$_} // die "$k: invalid name.\n";
-	}
-	exists $c->{$name} or die "$k: invalid name.\n";
-	$c->{$name} = $v;
-    }
-}
-
-sub getopt {
-    use Getopt::EX::Func;
-    *arg2kvlist = \&Getopt::EX::Func::arg2kvlist;
-    my($argv, $opt) = @_;
-    return if @{ $argv //= [] } == 0;
-    use Getopt::Long qw(GetOptionsFromArray);
-    Getopt::Long::Configure qw(bundling);
-    GetOptionsFromArray($argv, "config=s" => sub { config arg2kvlist($_[1]) } )
-	or die "Option parse error.\n";
-}
-
-sub mod_argv {
-    use List::Util qw(first);
-    my($mod, $argv) = @_;
-    my @my_argv;
-    if (@$argv and $argv->[0] !~ /^-M/ and
-	defined(my $i = first { $argv->[$_] eq '--' } keys @$argv)) {
-	splice @$argv, $i, 1; # remove '--'
-	@my_argv = splice @$argv, 0, $i;
-    }
-    ($mod, \@my_argv, $argv);
-}
-
-sub finalize {
-    our($mod, $my_argv, $argv) = mod_argv @_;
-    getopt $my_argv, \%config;
 }
 
 1;
