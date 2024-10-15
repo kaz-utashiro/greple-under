@@ -7,7 +7,7 @@ App::Greple::under - greple under-line module
 
     greple -Munder::line ...
 
-    greple -Munder::mise ... | greple -Munder::bake
+    greple -Munder::mise ... | greple -Munder::place
 
 # DESCRIPTION
 
@@ -55,9 +55,9 @@ Above command will produce output like this:
 
 If you want to process the search results before underlining them,
 process them in the `-Munder::mise` module and then pass them through
-the `-Munder::bake` module.
+the `-Munder::place` module.
 
-    greple -Munder::mise ... | ... | greple -Munder::bake
+    greple -Munder::mise ... | ... | greple -Munder::place
 
 <div>
     <p>

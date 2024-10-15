@@ -14,7 +14,7 @@ App::Greple::under - greple under-line module
 
     greple -Munder::line ...
 
-    greple -Munder::mise ... | greple -Munder::bake
+    greple -Munder::mise ... | greple -Munder::place
 
 =head1 DESCRIPTION
 
@@ -58,9 +58,9 @@ Above command will produce output like this:
 
 If you want to process the search results before underlining them,
 process them in the C<-Munder::mise> module and then pass them through
-the C<-Munder::bake> module.
+the C<-Munder::place> module.
 
-    greple -Munder::mise ... | ... | greple -Munder::bake
+    greple -Munder::mise ... | ... | greple -Munder::place
 
 =for html <p>
 <img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/mise-bake.png">
