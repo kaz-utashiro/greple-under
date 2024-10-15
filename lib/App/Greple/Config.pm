@@ -5,19 +5,23 @@ use warnings;
 
 use Exporter 'import';
 our @EXPORT = qw();
-our @EXPORT_OK = qw(config getopt split_argv mod_argv);
+our @EXPORT_OK = qw(&config &getopt &split_argv &mod_argv);
 
 use Getopt::Long qw(GetOptionsFromArray);
 Getopt::Long::Configure qw(bundling);
 
 use List::Util qw(first);
 
+our $config;
+
 sub new {
     my $class = shift;
-    our $config = bless { @_ }, $class;
+    $config = bless { @_ }, $class;
 }
 
-sub load {
+sub load { goto &deal_with }
+
+sub deal_with {
     my $obj = shift;
     my($my_argv, $argv) = split_argv(shift);
     getopt($my_argv, $obj) if @$my_argv;
@@ -28,7 +32,7 @@ sub load {
 sub config {
     while (my($k, $v) = splice @_, 0, 2) {
 	my @names = split /\./, $k;
-	my $c = our $config // die "config is not initialized.\n";
+	my $c = $config // die "config is not initialized.\n";
 	my $name = pop @names;
 	for (@names) {
 	    $c = $c->{$_} // die "$k: invalid name.\n";

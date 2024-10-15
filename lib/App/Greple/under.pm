@@ -99,12 +99,15 @@ use App::Greple::Config qw(config);
 my $config = App::Greple::Config->new(
     type => 'overline',
     space => ' ',
-    custommap => 1,
+    'custom-colormap' => 1,
 );
 
 sub finalize {
     our($mod, $argv) = @_;
-    $config->load($argv);
+    $config->deal_with($argv);
+    if (not $config->{'custom-colormap'}) {
+	$mod->setopt('--under-custom-colormap' => '$<ignore>');
+    }
 }
 
 $Term::ANSIColor::Concise::NO_RESET_EL = 1;
@@ -204,6 +207,7 @@ sub line {
 __DATA__
 
 option --under-line \
+    $<move> \
     --pf &__PACKAGE__::line
 
 option --under-custom-colormap \
