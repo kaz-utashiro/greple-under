@@ -43,6 +43,7 @@
       "runtime" : {
          "requires" : {
             "App::Greple" : "9.17",
+            "Hash::Util" : "0",
             "Term::ANSIColor::Concise" : "0",
             "Text::ANSI::Fold" : "0",
             "Text::ANSI::Fold::Util" : "0",

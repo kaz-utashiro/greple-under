@@ -38,19 +38,19 @@ next line.
 
 Above command will produce output like this:
 
-    ┌───────────────────────────────────────────────────────────────────────┐
-    │   The license agreements of most software companies try to keep users │
-    │       ▔▔▔▔▔▔▔ ▔▔▔▔▔▔▔▔▔▔         ▔▔▔▔▔▔▔▔                             │
-    │ at the mercy of those companies.  By contrast, our General Public     │
-    │ License is intended to guarantee your freedom to share and change free│
-    │                                       ▔▔▔▔▔▔▔                         │
-    │ software--to make sure the software is free for all its users.  The   │
-    │ ▔▔▔▔▔▔▔▔                   ▔▔▔▔▔▔▔▔                                   │
-    │ General Public License applies to the Free Software Foundation's      │
-    │ software and to any other program whose authors commit to using it.   │
-    │ ▔▔▔▔▔▔▔▔                                                              │
-    │ You can use it for your programs, too.                                │
-    └───────────────────────────────────────────────────────────────────────┘
+ ┌───────────────────────────────────────────────────────────────────────┐
+ │   The license agreements of most software companies try to keep users │
+ │       ▔▔▔▔▔▔▔ ▔▔▔▔▔▔▔▔▔▔         ▔▔▔▔▔▔▔▔                             │
+ │ at the mercy of those companies.  By contrast, our General Public     │
+ │ License is intended to guarantee your freedom to share and change free│
+ │                                       ▔▔▔▔▔▔▔                         │
+ │ software--to make sure the software is free for all its users.  The   │
+ │ ▔▔▔▔▔▔▔▔                   ▔▔▔▔▔▔▔▔                                   │
+ │ General Public License applies to the Free Software Foundation's      │
+ │ software and to any other program whose authors commit to using it.   │
+ │ ▔▔▔▔▔▔▔▔                                                              │
+ │ You can use it for your programs, too.                                │
+ └───────────────────────────────────────────────────────────────────────┘
 
 =for html <p>
 <img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/under-line.png">
@@ -66,6 +66,10 @@ the C<-Munder::bake> module.
 <img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/mise-bake.png">
 </p>
 
+=head1 SEE ALSO
+
+L<App::Greple>
+
 =head1 AUTHOR
 
 Kazumasa Utashiro
@@ -79,27 +83,35 @@ it under the same terms as Perl itself.
 
 =cut
 
+use Exporter 'import';
+our @EXPORT_OK = qw(%config &config &finalize);
+our %EXPORT_TAGS = (all => \@EXPORT_OK);
+
 use App::Greple::Common qw(@color_list);
 use Term::ANSIColor::Concise qw(ansi_code);
 use Text::ANSI::Fold;
 use Text::ANSI::Fold::Util qw(ansi_width);
+use Hash::Util qw(lock_keys);
 use Data::Dumper;
 
 $Term::ANSIColor::Concise::NO_RESET_EL = 1;
 Text::ANSI::Fold->configure(expand => 1);
 
-my $config = {
+our %config = (
     type => 'eighth',
+    space => ' ',
     "custom-colormap" => 1,
-};
+);
+lock_keys %config;
 
-my $space = ' ';
 my %marks  = (
-    eighth => [ "\N{UPPER ONE EIGHTH BLOCK}" ],
-    half =>   [ "\N{UPPER HALF BLOCK}" ],
+    eighth   => [ "\N{UPPER ONE EIGHTH BLOCK}" ],
+    half     => [ "\N{UPPER HALF BLOCK}" ],
     overline => [ "\N{OVERLINE}" ],
-    macron => [ "\N{MACRON}" ],
-    number => [ "0" .. "9" ],
+    macron   => [ "\N{MACRON}" ],
+    caret    => [ "^" ],
+    sign     => [ "+", "-" ],
+    number   => [ "0" .. "9" ],
     alphabet => [ "a" .. "z", "A" .. "Z" ],
     block => [
 	"\N{UPPER ONE EIGHTH BLOCK}",
@@ -128,12 +140,12 @@ my %marks  = (
 	"\N{BOX DRAWINGS DOUBLE UP AND HORIZONTAL}",
     ],
 );
-my @marks = $marks{$config->{type}}->@*;
 
 my $re;
 my %index;
+my @marks;
 
-sub setup {
+sub prepare {
     @color_list == 0 and die "color table is not available.\n";
     my @ansi = map { ansi_code($_) } @color_list;
     my @ansi_re = map { s/\\\e/\\e/gr } map { quotemeta($_) } @ansi;
@@ -143,10 +155,11 @@ sub setup {
 	local $" = '|';
 	qr/(?<ansi>@ansi_re) (?<text>[^\e]*) (?<reset>$reset_re)/x;
     };
+    @marks = $marks{$config{type}}->@*;
 }
 
 sub line {
-    setup();
+    prepare() if not $re;
     while (<>) {
 	local @_;
 	my @under;
@@ -155,7 +168,7 @@ sub line {
 	    push @_, $+{pre}, $+{text};
 	    my $mark = $marks[$index{$+{ansi}} % @marks];
 	    push @under,
-		$space x ansi_width($+{pre}),
+		$config{space} x ansi_width($+{pre}),
 		$mark  x ansi_width($+{text});
 	    $pos = pos;
 	}
@@ -169,6 +182,47 @@ sub line {
 	print join '', @_;
 	print join '', @under, "\n";
     }
+}
+
+sub config {
+    while (my($k, $v) = splice @_, 0, 2) {
+	my @names = split /\./, $k;
+	my $c = \%config;
+	my $name = pop @names;
+	for (@names) {
+	    $c = $c->{$_} // die "$k: invalid name.\n";
+	}
+	exists $c->{$name} or die "$k: invalid name.\n";
+	$c->{$name} = $v;
+    }
+}
+
+sub getopt {
+    use Getopt::EX::Func;
+    *arg2kvlist = \&Getopt::EX::Func::arg2kvlist;
+    my($argv, $opt) = @_;
+    return if @{ $argv //= [] } == 0;
+    use Getopt::Long qw(GetOptionsFromArray);
+    Getopt::Long::Configure qw(bundling);
+    GetOptionsFromArray($argv, "config=s" => sub { config arg2kvlist($_[1]) } )
+	or die "Option parse error.\n";
+}
+
+sub mod_argv {
+    use List::Util qw(first);
+    my($mod, $argv) = @_;
+    my @my_argv;
+    if (@$argv and $argv->[0] !~ /^-M/ and
+	defined(my $i = first { $argv->[$_] eq '--' } keys @$argv)) {
+	splice @$argv, $i, 1; # remove '--'
+	@my_argv = splice @$argv, 0, $i;
+    }
+    ($mod, \@my_argv, $argv);
+}
+
+sub finalize {
+    our($mod, $my_argv, $argv) = mod_argv @_;
+    getopt $my_argv, \%config;
 }
 
 1;

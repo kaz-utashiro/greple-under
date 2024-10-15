@@ -1,6 +1,7 @@
 requires 'perl', '5.024';
 
 requires 'App::Greple', '9.17';
+requires 'Hash::Util';
 requires 'Term::ANSIColor::Concise';
 requires 'Text::ANSI::Fold';
 requires 'Text::ANSI::Fold::Util';
