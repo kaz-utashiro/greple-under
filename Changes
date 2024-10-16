@@ -2,6 +2,10 @@ Revision history for Perl extension App-Greple-under
 
 {{$NEXT}}
 
+0.9904 2024-10-16T07:03:47Z
+
+    - introduce --show-colormap module option
+
 0.9903 2024-10-16T02:51:28Z
 
     - introduce "sequence" config parameter
