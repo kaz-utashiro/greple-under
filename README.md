@@ -84,6 +84,13 @@ Configuable parameters:
     Set under-line sequence.  The given string is broken down into single
     character sequences.
 
+## **--show-colormap**
+
+Print custom colormaps separated by whitespace characters.  You can
+read them into an array by [bash(1)](http://man.he.net/man1/bash) like this:
+
+    read -a MAP < <(greple -Munder::place --show-colormap --)
+
 # SEE ALSO
 
 [App::Greple](https://metacpan.org/pod/App%3A%3AGreple)

@@ -89,6 +89,13 @@ character sequences.
 
 =back
 
+=head2 B<--show-colormap>
+
+Print custom colormaps separated by whitespace characters.  You can
+read them into an array by L<bash(1)> like this:
+
+    read -a MAP < <(greple -Munder::place --show-colormap --)
+
 =head1 SEE ALSO
 
 L<App::Greple>
@@ -124,13 +131,24 @@ my $config = App::Greple::Config->new(
     space => ' ',
     sequence => '',
     'custom-colormap' => 1,
+    'show-colormap' => 0,
 );
 
 sub finalize {
     our($mod, $argv) = @_;
-    $config->deal_with($argv);
+    $config->deal_with($argv,
+		       "show-colormap!" => \$config->{"show-colormap"},
+		   );
     if (not $config->{'custom-colormap'}) {
 	$mod->setopt('--under-custom-colormap' => '$<ignore>');
+    }
+}
+
+sub prologue {
+    if ($config->{"show-colormap"}) {
+	prepare();
+	print "@color_list\n";
+	exit 0;
     }
 }
 
@@ -180,6 +198,7 @@ my @marks;
 
 sub prepare {
     @color_list == 0 and die "color table is not available.\n";
+
     my @ansi = map { ansi_code($_) } @color_list;
     my @ansi_re = map { s/\\\e/\\e/gr } map { quotemeta($_) } @ansi;
     %index = map { $ansi[$_] => $_ } keys @ansi;
@@ -229,11 +248,14 @@ sub line {
 
 __DATA__
 
-option --under-line \
+option default \
+    --prologue &__PACKAGE__::prologue
+
+option --place-line \
     $<move> \
     --pf &__PACKAGE__::line
 
-option --under-custom-colormap \
+option --use-custom-colormap \
     $<move> \
     --cm @ \
     --cm {SGR26;1},{SGR26;2},{SGR26;3} \

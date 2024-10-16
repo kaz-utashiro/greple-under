@@ -12,5 +12,5 @@ __DATA__
 
 option default \
     -Munder \
-    --under-custom-colormap \
-    --under-line
+    --use-custom-colormap \
+    --place-line
