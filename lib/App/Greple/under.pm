@@ -66,6 +66,29 @@ the C<-Munder::place> module.
 <img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/mise-bake.png">
 </p>
 
+=head1 MODULE OPTION
+
+=head2 B<--config>
+
+Set config parameters.
+
+    greple -Munder::line --config type=eighth -- ...
+
+Configuable parameters:
+
+=over 4
+
+=item C<type>
+
+Set under-line type.
+
+=item C<sequence>
+
+Set under-line sequence.  The given string is broken down into single
+character sequences.
+
+=back
+
 =head1 SEE ALSO
 
 L<App::Greple>
@@ -99,6 +122,7 @@ use App::Greple::Config qw(config);
 my $config = App::Greple::Config->new(
     type => 'overline',
     space => ' ',
+    sequence => '',
     'custom-colormap' => 1,
 );
 
@@ -119,7 +143,7 @@ my %marks  = (
     overline => [ "\N{OVERLINE}" ],
     macron   => [ "\N{MACRON}" ],
     caret    => [ "^" ],
-    sign     => [ "+", "-" ],
+    sign     => [ qw( + - ~ ) ],
     number   => [ "0" .. "9" ],
     alphabet => [ "a" .. "z", "A" .. "Z" ],
     block => [
@@ -164,15 +188,14 @@ sub prepare {
 	local $" = '|';
 	qr/(?<ansi>@ansi_re) (?<text>[^\e]*) (?<reset>$reset_re)/x;
     };
-    my $type = $config->{type};
-    if (my $mark = $marks{$type}) {
+    if (my $s = $config->{sequence}) {
+	@marks = $s =~ /\S/g;
+    }
+    elsif (my $mark = $marks{$config->{type}}) {
 	@marks = $mark->@*;
-    } else {
-	if ($type =~ /\A\X\z/) {
-	    @marks = ($type);
-	} else {
-	    die "$type: invalid type.\n";
-	}
+    }
+    else {
+	die "$config->{type}: invalid type.\n";
     }
 }
 

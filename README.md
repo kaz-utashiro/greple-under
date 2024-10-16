@@ -65,6 +65,25 @@ the `-Munder::place` module.
     </p>
 </div>
 
+# MODULE OPTION
+
+## **--config**
+
+Set config parameters.
+
+    greple -Munder::line --config type=eighth -- ...
+
+Configuable parameters:
+
+- `type`
+
+    Set under-line type.
+
+- `sequence`
+
+    Set under-line sequence.  The given string is broken down into single
+    character sequences.
+
 # SEE ALSO
 
 [App::Greple](https://metacpan.org/pod/App%3A%3AGreple)
