@@ -63,7 +63,7 @@ the C<-Munder::place> module.
     greple -Munder::mise ... | ... | greple -Munder::place
 
 =for html <p>
-<img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/mise-bake.png">
+<img width="750" src="https://raw.githubusercontent.com/kaz-utashiro/greple-under/main/images/mise-place.png">
 </p>
 
 =head1 MODULE OPTION
