@@ -161,6 +161,7 @@ my %marks  = (
     overline => [ "\N{OVERLINE}" ],
     macron   => [ "\N{MACRON}" ],
     caret    => [ "^" ],
+    ring     => [ "\N{NBSP}\N{COMBINING RING ABOVE}" ],
     sign     => [ qw( + - ~ ) ],
     number   => [ "0" .. "9" ],
     alphabet => [ "a" .. "z", "A" .. "Z" ],
@@ -208,7 +209,7 @@ sub prepare {
 	qr/(?<ansi>@ansi_re) (?<text>[^\e]*) (?<reset>$reset_re)/x;
     };
     if (my $s = $config->{sequence}) {
-	@marks = $s =~ /\S/g;
+	@marks = grep { ! /\A\s\z/ } $s =~ /\X/g;
     }
     elsif (my $mark = $marks{$config->{type}}) {
 	@marks = $mark->@*;
