@@ -124,23 +124,25 @@ use Text::ANSI::Fold::Util qw(ansi_width);
 use Hash::Util qw(lock_keys);
 use Data::Dumper;
 
-use App::Greple::Config qw(config);
+use Getopt::EX::Config qw(config);
 
-my $config = App::Greple::Config->new(
-    type => 'overline',
-    space => ' ',
-    sequence => '',
+my $config = Getopt::EX::Config->new(
+    type              => 'overline',
+    space             => ' ',
+    sequence          => '',
     'custom-colormap' => 1,
-    'show-colormap' => 0,
+    'show-colormap'   => 0,
 );
 
 sub finalize {
     our($mod, $argv) = @_;
-    $config->deal_with($argv,
-		       "show-colormap!" => \$config->{"show-colormap"},
-		   );
+    $config->deal_with(
+	$argv,
+	map("$_=s", qw(type space sequence)),
+	map("$_!" , qw(custom-colormap show-colormap)),
+    );
     if (not $config->{'custom-colormap'}) {
-	$mod->setopt('--under-custom-colormap' => '$<ignore>');
+	$mod->setopt('--use-custom-colormap' => '$<ignore>');
     }
 }
 
