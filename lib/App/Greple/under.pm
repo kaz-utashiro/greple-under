@@ -2,7 +2,7 @@ package App::Greple::under;
 use 5.024;
 use warnings;
 
-our $VERSION = "0.9905";
+our $VERSION = "1.00";
 
 =encoding utf-8
 
@@ -106,7 +106,7 @@ Kazumasa Utashiro
 
 =head1 LICENSE
 
-Copyright ©︎ 2024 Kazumasa Utashiro.
+Copyright ©︎ 2024-2025 Kazumasa Utashiro.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
